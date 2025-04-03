@@ -53,6 +53,28 @@ public class MemberService {
 
         return "로그인 성공";
     }
+    public String delete(DeleteRequestDto deleteRequestDto) {
+         boolean existEmail = memberRepository.existsByEmail(deleteRequestDto.email());
 
+         if(!existEmail) {
+             throw new IllegalArgumentException("존재하는 회원이 아닙니다.");
+         }
+
+         boolean checkPassword = memberRepository.existsByPassword(deleteRequestDto.password());
+
+         if (!checkPassword) {
+             throw new IllegalArgumentException("비밀번호가 틀렸습니다.");
+         }
+
+         Member member = Member.builder()
+                 .username(deleteRequestDto.username())
+                 .password(deleteRequestDto.password())
+                 .email(deleteRequestDto.email())
+                 .build();
+
+         memberRepository.delete(member);
+
+         return "회원탈퇴 성공";
+    }
 
 }
