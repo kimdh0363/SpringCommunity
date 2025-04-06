@@ -158,8 +158,7 @@ class MemberServiceTest {
 
 
     }
-
-    private static Member createMember() {
+    public static Member createMember() {
         return Member.builder()
                 .username("Test")
                 .password("Test")
