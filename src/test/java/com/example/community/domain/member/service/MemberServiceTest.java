@@ -2,6 +2,7 @@ package com.example.community.domain.member.service;
 
 import com.example.community.domain.member.dto.SignInRequestDto;
 import com.example.community.domain.member.dto.SignUpRequestDto;
+import com.example.community.domain.member.dto.UpdateRequestDto;
 import com.example.community.domain.member.entity.Member;
 import com.example.community.domain.member.repository.MemberRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -121,7 +122,7 @@ class MemberServiceTest {
 
     }
 
-    @DisplayName("사용자에게 받은 정보를 통해 회원탈퇴를 진행한다.")
+    @DisplayName("사용자에게 받은 ID를 통해 회원탈퇴를 진행한다.")
     @Test
     void delete() {
         Member member = createMember();
@@ -130,8 +131,33 @@ class MemberServiceTest {
 
         Long memberId = member.getId();
         memberService.delete(memberId);
+
+        Optional<Member> deleteMember = memberRepository.findById(memberId);
+        assertThat(deleteMember).isNotPresent();
     }
 
+    @DisplayName("사용자에게 받은 정보를 통해 회원수정을 진행한다")
+    @Test
+    void update() {
+        Member member = createMember();
+        memberRepository.save(member);
+
+        Long memberId = member.getId();
+
+        UpdateRequestDto updateRequestDto = UpdateRequestDto.builder()
+                .username("Test123")
+                .password("Test123")
+                .email("Test123@Test.com")
+                .build();
+
+        memberService.update(memberId, updateRequestDto);
+
+        assertThat(updateRequestDto.username()).isEqualTo("Test123");
+        assertThat(updateRequestDto.password()).isEqualTo("Test123");
+        assertThat(updateRequestDto.email()).isEqualTo("Test123@Test.com");
+
+
+    }
 
     private static Member createMember() {
         return Member.builder()

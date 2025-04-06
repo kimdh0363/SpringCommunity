@@ -35,7 +35,6 @@ public class MemberController {
     @PatchMapping("/{memberId}")
     public ResponseEntity<?> update(@PathVariable("memberId") Long memberId, @RequestBody UpdateRequestDto updateRequestDto) {
         memberService.update(memberId, updateRequestDto);
-
         return ResponseEntity.ok("회원 수정 성공");
     }
 }
