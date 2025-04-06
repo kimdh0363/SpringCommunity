@@ -14,7 +14,6 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class MemberServiceTest {
@@ -54,11 +53,7 @@ class MemberServiceTest {
     @DisplayName("이미 존재하는 이메일로 회원가입을 시도하면 예외가 발생한다,")
     @Test
     void signUpThrowExceptionCausedByDuplicateEmail() throws Exception {
-        Member member = Member.builder()
-                .username("Test")
-                .password("Test")
-                .email("Test@Test.com")
-                .build();
+        Member member = createMember();
 
         memberRepository.save(member);
 
@@ -77,11 +72,7 @@ class MemberServiceTest {
     @Test
     void signIn() {
         //given
-        Member member = Member.builder()
-                .username("Test")
-                .password("Test")
-                .email("Test@Test.com")
-                .build();
+        Member member = createMember();
 
         memberRepository.save(member);
 
@@ -98,11 +89,7 @@ class MemberServiceTest {
     @DisplayName("존재하지 않는 이메일을 받아오면 예외가 발생한다.")
     @Test
     void signInThrowExceptionCauseByNotExistEmail() {
-        Member member = Member.builder()
-                .username("Test")
-                .password("Test")
-                .email("Test@Test.com")
-                .build();
+        Member member = createMember();
 
         memberRepository.save(member);
 
@@ -120,14 +107,9 @@ class MemberServiceTest {
     @DisplayName("비밀번호가 틀리면 예외가 발생한다")
     @Test
     void signInThrowExceptionCauseByNotEqualsPassword() {
-        Member member = Member.builder()
-                .username("Test")
-                .password("Test")
-                .email("Test@Test.com")
-                .build();
+        Member member = createMember();
 
         memberRepository.save(member);
-
         SignInRequestDto signInRequestDto = SignInRequestDto.builder()
                 .email("Test@Test.com")
                 .password("Test1234")
@@ -136,6 +118,27 @@ class MemberServiceTest {
         assertThatThrownBy(() -> memberService.signIn(signInRequestDto))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("비밀번호가 틀렸습니다.");
+
+    }
+
+    @DisplayName("사용자에게 받은 정보를 통해 회원탈퇴를 진행한다.")
+    @Test
+    void delete() {
+        Member member = createMember();
+
+        memberRepository.save(member);
+
+        Long memberId = member.getId();
+        memberService.delete(memberId);
+    }
+
+
+    private static Member createMember() {
+        return Member.builder()
+                .username("Test")
+                .password("Test")
+                .email("Test@Test.com")
+                .build();
 
     }
 }

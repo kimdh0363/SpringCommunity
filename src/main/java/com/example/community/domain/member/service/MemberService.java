@@ -1,12 +1,13 @@
 package com.example.community.domain.member.service;
 
-import com.example.community.domain.member.dto.DeleteRequestDto;
 import com.example.community.domain.member.dto.SignInRequestDto;
 import com.example.community.domain.member.dto.SignUpRequestDto;
+import com.example.community.domain.member.dto.UpdateRequestDto;
 import com.example.community.domain.member.entity.Member;
 import com.example.community.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -53,28 +54,29 @@ public class MemberService {
 
         return "로그인 성공";
     }
-    public String delete(DeleteRequestDto deleteRequestDto) {
-         boolean existEmail = memberRepository.existsByEmail(deleteRequestDto.email());
 
-         if(!existEmail) {
-             throw new IllegalArgumentException("존재하는 회원이 아닙니다.");
-         }
 
-         boolean checkPassword = memberRepository.existsByPassword(deleteRequestDto.password());
+    //회원 탈퇴
+    @Transactional
+    public void delete(Long id) {
 
-         if (!checkPassword) {
-             throw new IllegalArgumentException("비밀번호가 틀렸습니다.");
-         }
-
-         Member member = Member.builder()
-                 .username(deleteRequestDto.username())
-                 .password(deleteRequestDto.password())
-                 .email(deleteRequestDto.email())
-                 .build();
+         Member member = memberRepository.findById(id)
+                 .orElseThrow(() -> new IllegalArgumentException("존재하는 회원이 아닙니다."));
 
          memberRepository.delete(member);
-
-         return "회원탈퇴 성공";
     }
+
+    @Transactional
+    public void update(Long id, UpdateRequestDto updateRequestDto) {
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하는 회원이 아닙니다."));
+
+        member.updateMember(
+                updateRequestDto.username(),
+                updateRequestDto.password(),
+                updateRequestDto.email());
+
+    }
+
 
 }

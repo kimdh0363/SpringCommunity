@@ -2,14 +2,11 @@ package com.example.community.domain.member.controller;
 
 import com.example.community.domain.member.dto.SignInRequestDto;
 import com.example.community.domain.member.dto.SignUpRequestDto;
+import com.example.community.domain.member.dto.UpdateRequestDto;
 import com.example.community.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
@@ -25,7 +22,20 @@ public class MemberController {
     }
 
     @PostMapping("/sign-in")
-    public ResponseEntity<String> signIn(@RequestBody SignInRequestDto signInRequestDto) {
+    public ResponseEntity<?> signIn(@RequestBody SignInRequestDto signInRequestDto) {
         return ResponseEntity.ok(memberService.signIn(signInRequestDto));
+    }
+
+    @DeleteMapping("/{memberId}")
+    public ResponseEntity<?> delete(@PathVariable("memberId") Long memberId) {
+        memberService.delete(memberId);
+        return ResponseEntity.ok("회원탈퇴 성공");
+    }
+
+    @PatchMapping("/{memberId}")
+    public ResponseEntity<?> update(@PathVariable("memberId") Long memberId, @RequestBody UpdateRequestDto updateRequestDto) {
+        memberService.update(memberId, updateRequestDto);
+
+        return ResponseEntity.ok("회원 수정 성공");
     }
 }
