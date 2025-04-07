@@ -1,16 +1,10 @@
 package com.example.community.domain.board.controller;
 
 import com.example.community.domain.board.dto.BoardRequestDto;
-import com.example.community.domain.board.repository.BoardRepository;
 import com.example.community.domain.board.service.BoardService;
-import jakarta.persistence.GeneratedValue;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
@@ -25,4 +19,9 @@ public class BoardController {
         return ResponseEntity.ok("게시글 저장 성공");
     }
 
+    @PostMapping("/{boardId}")
+    public ResponseEntity<?> getBoard(@PathVariable("boardId") Long boardId) {
+        boardService.getBoard(boardId);
+        return ResponseEntity.ok("단일 게시글 조회 성공");
+    }
 }

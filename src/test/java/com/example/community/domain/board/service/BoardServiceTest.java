@@ -55,4 +55,5 @@ class BoardServiceTest {
         assertThat(boardRequestDto.content()).isEqualTo("Test");
 
     }
+
 }

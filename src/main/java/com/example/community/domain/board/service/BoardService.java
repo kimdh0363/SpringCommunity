@@ -1,5 +1,6 @@
 package com.example.community.domain.board.service;
 
+import com.example.community.domain.board.dto.BoardInfoRequestDto;
 import com.example.community.domain.board.dto.BoardRequestDto;
 import com.example.community.domain.board.entity.Board;
 import com.example.community.domain.board.repository.BoardRepository;
@@ -8,6 +9,8 @@ import com.example.community.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,5 +32,17 @@ public class BoardService {
                 .build();
 
         boardRepository.save(board);
+    }
+
+    public void getBoard(Long boardId) {
+        Board board = boardRepository.findBoardById(boardId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하는 게시글이 아닙니다."));
+
+        BoardInfoRequestDto boardInfoRequestDto = BoardInfoRequestDto.builder()
+                .boardId(board.getId())
+                .title(board.getTitle())
+                .content(board.getContent())
+                .member(board.getMember())
+                .build();
     }
 }
