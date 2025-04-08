@@ -34,15 +34,16 @@ public class BoardService {
         boardRepository.save(board);
     }
 
-    public void getBoard(Long boardId) {
+    public BoardInfoRequestDto getBoard(Long boardId) {
         Board board = boardRepository.findBoardById(boardId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하는 게시글이 아닙니다."));
 
-        BoardInfoRequestDto boardInfoRequestDto = BoardInfoRequestDto.builder()
+        return BoardInfoRequestDto.builder()
                 .boardId(board.getId())
                 .title(board.getTitle())
                 .content(board.getContent())
                 .member(board.getMember())
                 .build();
+
     }
 }

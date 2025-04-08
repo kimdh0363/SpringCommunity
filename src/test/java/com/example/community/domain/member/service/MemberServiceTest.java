@@ -164,6 +164,5 @@ class MemberServiceTest {
                 .password("Test")
                 .email("Test@Test.com")
                 .build();
-
     }
 }
