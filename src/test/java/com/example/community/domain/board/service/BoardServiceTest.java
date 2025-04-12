@@ -14,6 +14,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -49,39 +51,34 @@ class BoardServiceTest {
                 .build();
         boardService.createBoard(memberId, boardRequestDto);
 
+        //Dto랑 임의의 값이랑 비교하지말고 리포지토리에서 받아와서 거시기하기
+
         assertThat(boardRequestDto.memberId()).isEqualTo(memberId);
         assertThat(boardRequestDto.title()).isEqualTo("Test");
         assertThat(boardRequestDto.content()).isEqualTo("Test");
 
     }
 
-    @DisplayName("존재하지 않는 ID을 받아오면 예외가 발생한다.")
-    @Test
-    void getBoardThrowExceptionCauseByNotExistId() {
-        Member member = createMember();
-        memberRepository.save(member);
-
-        Board board = createBoard(member);
-        boardRepository.save(board);
 
 
 
-
-    }
-
+    //id가 없을 때의 예외, 널값일때의 예외, id가 존재하지 않을때의 예외 다 만들어리.
     @DisplayName("사용자로부터 id를 받아와 단일 게시글을 조회한다.")
     @Test
     void getBoard() {
         Member member = createMember();
         memberRepository.save(member);
 
-        Board board = createBoard(member);
-        boardRepository.save(board);
+        BoardRequestDto boardRequestDto = createBoard(member);
+        boardService.createBoard(member.getId(), boardRequestDto);
+
+        Board board = boardRepository.findAll().getFirst();
 
         BoardInfoRequestDto boardInfoRequestDto = boardService.getBoard(board.getId());
-        assertThat(boardInfoRequestDto.title()).isEqualTo("Test");
-        assertThat(boardInfoRequestDto.content()).isEqualTo("Test");
-        assertThat(boardInfoRequestDto.member()).isEqualTo(member);
+
+        assertThat(boardInfoRequestDto.title()).isEqualTo("Test-Title");
+        assertThat(boardInfoRequestDto.content()).isEqualTo("Test-Content");
+        assertThat(boardInfoRequestDto.memberId()).isEqualTo(member.getId());
 
 
     }
@@ -93,11 +90,11 @@ class BoardServiceTest {
                 .email("Test@Test.com")
                 .build();
     }
-    public static Board createBoard(Member member) {
-        return Board.builder()
-                .title("Test")
-                .content("Test")
-                .member(member)
+    public static BoardRequestDto createBoard(Member member) {
+        return BoardRequestDto.builder()
+                .memberId(member.getId())
+                .title("Test-Title")
+                .content("Test-Content")
                 .build();
     }
 }

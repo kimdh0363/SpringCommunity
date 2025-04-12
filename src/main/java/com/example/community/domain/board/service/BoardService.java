@@ -9,6 +9,7 @@ import com.example.community.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -34,15 +35,15 @@ public class BoardService {
         boardRepository.save(board);
     }
 
+    @Transactional(readOnly = true)
     public BoardInfoRequestDto getBoard(Long boardId) {
-        Board board = boardRepository.findBoardById(boardId)
+        Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하는 게시글이 아닙니다."));
 
         return BoardInfoRequestDto.builder()
-                .boardId(board.getId())
                 .title(board.getTitle())
                 .content(board.getContent())
-                .member(board.getMember())
+                .memberId(board.getMember().getId())
                 .build();
 
     }

@@ -5,9 +5,8 @@ import lombok.Builder;
 
 @Builder
 public record BoardInfoRequestDto(
-        Long boardId,
         String title,
         String content,
-        Member member
+        Long memberId
 ) {
 }
