@@ -28,7 +28,8 @@ public class BoardController {
 
     @PatchMapping("/{boardId}")
     public ResponseEntity<?> updateBoard(@PathVariable("boardId") Long boardId, @RequestBody BoardUpdateRequestDto updateRequestDto) {
-        boardService.updateBoard(boardId, updateRequestDto);
+        Long memberId = updateRequestDto.memberId();
+        boardService.updateBoard(boardId,memberId, updateRequestDto);
         return ResponseEntity.ok("게시글 수정 성공");
     }
 }

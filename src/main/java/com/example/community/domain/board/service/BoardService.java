@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -50,12 +51,13 @@ public class BoardService {
     }
 
     @Transactional
-    public void updateBoard(Long boardId, BoardUpdateRequestDto updateRequestDto) {
+    public void updateBoard(Long boardId, Long memberId, BoardUpdateRequestDto updateRequestDto) {
         Board board = boardRepository.findBoardById(boardId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
 
-        memberRepository.findById(updateRequestDto.memberId())
-                .orElseThrow(()->new IllegalArgumentException("존재하지 않는 회원입니다."));
+        if(!Objects.equals(board.getMember().getId(), memberId)) {
+            throw new IllegalArgumentException("수정권한이 있는 회원이 아닙니다.");
+        }
 
         board.updateBoard(updateRequestDto.title(),
                 updateRequestDto.content());

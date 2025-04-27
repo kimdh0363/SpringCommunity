@@ -2,6 +2,7 @@ package com.example.community.domain.board.service;
 
 import com.example.community.domain.board.dto.BoardInfoRequestDto;
 import com.example.community.domain.board.dto.BoardRequestDto;
+import com.example.community.domain.board.dto.BoardUpdateRequestDto;
 import com.example.community.domain.board.entity.Board;
 import com.example.community.domain.board.repository.BoardRepository;
 import com.example.community.domain.member.entity.Member;
@@ -42,7 +43,7 @@ class BoardServiceTest {
 
         memberRepository.save(member);
 
-        Long memberId= member.getId();
+        Long memberId = member.getId();
 
         BoardRequestDto boardRequestDto = BoardRequestDto.builder()
                 .memberId(memberId)
@@ -62,8 +63,6 @@ class BoardServiceTest {
 
 
     }
-
-
 
 
     //id가 없을 때의 예외, 널값일때의 예외, id가 존재하지 않을때의 예외 다 만들어리.
@@ -96,7 +95,34 @@ class BoardServiceTest {
         boardService.createBoard(member.getId(), boardRequestDto);
 
 
+    }
 
+    @DisplayName("수정할 정보를 입력하면 게시글의 정보가 수정된다.")
+    @Test
+    void updateBoard() {
+        Member member = createMember();
+        memberRepository.save(member);
+
+        BoardRequestDto saveBoard = createBoard(member);
+        boardService.createBoard(member.getId(), saveBoard);
+        Board savedBoard = boardRepository.findAll().getFirst();
+
+        BoardUpdateRequestDto updateRequestDto = BoardUpdateRequestDto.builder()
+                .title("Test123")
+                .content("Test123")
+                .build();
+
+
+        Board board = boardRepository.findBoardById(savedBoard.getId())
+                .orElseThrow(()->new IllegalArgumentException("존재하지 않는 게시글입니다."));
+
+        boardService.updateBoard(savedBoard.getId(), member.getId(),updateRequestDto);
+
+        Board updatedBoard = boardRepository.findBoardById(board.getId())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
+
+        assertThat(updatedBoard.getTitle()).isEqualTo(updateRequestDto.title());
+        assertThat(updatedBoard.getContent()).isEqualTo(updateRequestDto.content());
     }
 
     public static Member createMember() {
@@ -106,6 +132,7 @@ class BoardServiceTest {
                 .email("Test@Test.com")
                 .build();
     }
+
     public static BoardRequestDto createBoard(Member member) {
         return BoardRequestDto.builder()
                 .memberId(member.getId())
