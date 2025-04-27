@@ -29,4 +29,14 @@ public class Board {
         this.content = content;
         this.member = member;
     }
+
+    public void updateBoard(String title, String content) {
+        if(title!=null) {
+            this.title = title;
+        }
+        if(content!=null) {
+            this.content = content;
+        }
+    }
 }
+

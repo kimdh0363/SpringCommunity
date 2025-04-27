@@ -2,12 +2,12 @@ package com.example.community.domain.board.service;
 
 import com.example.community.domain.board.dto.BoardInfoRequestDto;
 import com.example.community.domain.board.dto.BoardRequestDto;
+import com.example.community.domain.board.dto.BoardUpdateRequestDto;
 import com.example.community.domain.board.entity.Board;
 import com.example.community.domain.board.repository.BoardRepository;
 import com.example.community.domain.member.entity.Member;
 import com.example.community.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +37,7 @@ public class BoardService {
 
     @Transactional(readOnly = true)
     public BoardInfoRequestDto getBoard(Long boardId) {
+
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하는 게시글이 아닙니다."));
 
@@ -46,5 +47,17 @@ public class BoardService {
                 .memberId(board.getMember().getId())
                 .build();
 
+    }
+
+    @Transactional
+    public void updateBoard(Long boardId, BoardUpdateRequestDto updateRequestDto) {
+        Board board = boardRepository.findBoardById(boardId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
+
+        memberRepository.findById(updateRequestDto.memberId())
+                .orElseThrow(()->new IllegalArgumentException("존재하지 않는 회원입니다."));
+
+        board.updateBoard(updateRequestDto.title(),
+                updateRequestDto.content());
     }
 }

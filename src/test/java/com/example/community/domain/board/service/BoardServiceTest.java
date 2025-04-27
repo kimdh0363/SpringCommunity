@@ -53,9 +53,13 @@ class BoardServiceTest {
 
         //Dto랑 임의의 값이랑 비교하지말고 리포지토리에서 받아와서 거시기하기
 
-        assertThat(boardRequestDto.memberId()).isEqualTo(memberId);
-        assertThat(boardRequestDto.title()).isEqualTo("Test");
-        assertThat(boardRequestDto.content()).isEqualTo("Test");
+        Optional<Board> saveBoard = boardRepository.findAllByTitle(boardRequestDto.title());
+
+        assertThat(saveBoard).isNotNull();
+        assertThat(saveBoard.get().getTitle()).isEqualTo(boardRequestDto.title());
+        assertThat(saveBoard.get().getContent()).isEqualTo(boardRequestDto.content());
+        assertThat(saveBoard.get().getMember().getId()).isEqualTo(boardRequestDto.memberId());
+
 
     }
 
@@ -76,9 +80,21 @@ class BoardServiceTest {
 
         BoardInfoRequestDto boardInfoRequestDto = boardService.getBoard(board.getId());
 
-        assertThat(boardInfoRequestDto.title()).isEqualTo("Test-Title");
-        assertThat(boardInfoRequestDto.content()).isEqualTo("Test-Content");
-        assertThat(boardInfoRequestDto.memberId()).isEqualTo(member.getId());
+        assertThat(boardInfoRequestDto.title()).isEqualTo(boardRequestDto.title());
+        assertThat(boardInfoRequestDto.content()).isEqualTo(boardRequestDto.content());
+        assertThat(boardInfoRequestDto.memberId()).isEqualTo(boardRequestDto.memberId());
+
+    }
+
+    @DisplayName("사용자로부터 id가 DB에 없을 때 예외가 발생한다.")
+    @Test
+    void getBoardThrowExceptionCausedByNullId() {
+        Member member = createMember();
+        memberRepository.save(member);
+
+        BoardRequestDto boardRequestDto = createBoard(member);
+        boardService.createBoard(member.getId(), boardRequestDto);
+
 
 
     }
