@@ -111,19 +111,38 @@ class BoardServiceTest {
                 .build();
 
 
-        Board board = boardRepository.findByBoardId(savedBoard.getId())
+        Board board = boardRepository.findById(savedBoard.getId())
                 .orElseThrow(()->new IllegalArgumentException("존재하지 않는 게시글입니다."));
 
         boardService.updateBoard(savedBoard.getId(), member.getId(),updateRequestDto);
 
-        Board updatedBoard = boardRepository.findByBoardId(board.getId())
+        Board updatedBoard = boardRepository.findById(board.getId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
 
         assertThat(updatedBoard.getTitle()).isEqualTo(updateRequestDto.title());
         assertThat(updatedBoard.getContent()).isEqualTo(updateRequestDto.content());
     }
 
-    public static Member createMember() {
+    @DisplayName("게시글 id 받아와서 게시글을 삭제할 수 있다.")
+    @Test
+    void deleteBoard() {
+        Member member = createMember();
+        memberRepository.save(member);
+
+        BoardRequestDto saveBoard = createBoard(member);
+        boardService.createBoard(member.getId(), saveBoard);
+
+        Board savedBoard = boardRepository.findAll().getFirst();
+
+        boardService.deleteBoard(savedBoard.getId(), member.getId());
+
+        assertThat(boardRepository.findById(savedBoard.getId())).isEmpty();
+
+
+    }
+
+
+    static Member createMember() {
         return Member.builder()
                 .username("Test")
                 .password("Test")
@@ -131,11 +150,13 @@ class BoardServiceTest {
                 .build();
     }
 
-    public static BoardRequestDto createBoard(Member member) {
+    static BoardRequestDto createBoard(Member member) {
         return BoardRequestDto.builder()
                 .memberId(member.getId())
                 .title("Test-Title")
                 .content("Test-Content")
                 .build();
     }
+
+
 }
