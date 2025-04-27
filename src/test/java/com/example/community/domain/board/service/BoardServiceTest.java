@@ -7,8 +7,6 @@ import com.example.community.domain.board.entity.Board;
 import com.example.community.domain.board.repository.BoardRepository;
 import com.example.community.domain.member.entity.Member;
 import com.example.community.domain.member.repository.MemberRepository;
-import com.example.community.domain.member.service.MemberService;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -113,12 +111,12 @@ class BoardServiceTest {
                 .build();
 
 
-        Board board = boardRepository.findBoardById(savedBoard.getId())
+        Board board = boardRepository.findByBoardId(savedBoard.getId())
                 .orElseThrow(()->new IllegalArgumentException("존재하지 않는 게시글입니다."));
 
         boardService.updateBoard(savedBoard.getId(), member.getId(),updateRequestDto);
 
-        Board updatedBoard = boardRepository.findBoardById(board.getId())
+        Board updatedBoard = boardRepository.findByBoardId(board.getId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
 
         assertThat(updatedBoard.getTitle()).isEqualTo(updateRequestDto.title());

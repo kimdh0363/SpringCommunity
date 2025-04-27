@@ -1,5 +1,6 @@
 package com.example.community.domain.board.service;
 
+import com.example.community.domain.board.dto.BoardDeleteRequestDto;
 import com.example.community.domain.board.dto.BoardInfoRequestDto;
 import com.example.community.domain.board.dto.BoardRequestDto;
 import com.example.community.domain.board.dto.BoardUpdateRequestDto;
@@ -12,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -39,8 +39,7 @@ public class BoardService {
     @Transactional(readOnly = true)
     public BoardInfoRequestDto getBoard(Long boardId) {
 
-        Board board = boardRepository.findById(boardId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하는 게시글이 아닙니다."));
+        Board board = findBoardById(boardId);
 
         return BoardInfoRequestDto.builder()
                 .title(board.getTitle())
@@ -52,8 +51,7 @@ public class BoardService {
 
     @Transactional
     public void updateBoard(Long boardId, Long memberId, BoardUpdateRequestDto updateRequestDto) {
-        Board board = boardRepository.findBoardById(boardId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
+        Board board = findBoardById(boardId);
 
         if(!Objects.equals(board.getMember().getId(), memberId)) {
             throw new IllegalArgumentException("수정권한이 있는 회원이 아닙니다.");
@@ -61,5 +59,22 @@ public class BoardService {
 
         board.updateBoard(updateRequestDto.title(),
                 updateRequestDto.content());
+    }
+
+    @Transactional
+    public void deleteBoard(Long boardId, Long memberId) {
+
+        Board board = findBoardById(boardId);
+
+        if(!Objects.equals(board.getMember().getId(), memberId)) {
+            throw new IllegalArgumentException("삭제권한이 있는 회원이 아닙니다.");
+        }
+
+        boardRepository.delete(board);
+    }
+
+    private Board findBoardById(Long boardId) {
+        return boardRepository.findById(boardId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하는 게시글이 아닙니다."));
     }
 }
