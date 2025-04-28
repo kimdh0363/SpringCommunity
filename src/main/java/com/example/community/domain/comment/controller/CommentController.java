@@ -27,7 +27,8 @@ public class CommentController {
 
     @PatchMapping("/{commentId}")
     public ResponseEntity<?> updateComment(@PathVariable("commentId") Long commentId, @PathVariable("boardId") Long boardId, @RequestBody CommentUpdateRequestDto updateRequestDto) {
-        commentService.updateComment(commentId, updateRequestDto);
+        commentService.updateComment(commentId, boardId, updateRequestDto);
+        return ResponseEntity.ok("게시글 수정 완료");
     }
 
 }
