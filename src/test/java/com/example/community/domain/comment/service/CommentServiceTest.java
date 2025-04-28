@@ -2,6 +2,7 @@ package com.example.community.domain.comment.service;
 
 import com.example.community.domain.board.entity.Board;
 import com.example.community.domain.board.repository.BoardRepository;
+import com.example.community.domain.comment.dto.CommentDeleteRequestDto;
 import com.example.community.domain.comment.dto.CommentInfoResponseDto;
 import com.example.community.domain.comment.dto.CommentSaveRequestDto;
 import com.example.community.domain.comment.dto.CommentUpdateRequestDto;
@@ -104,6 +105,28 @@ class CommentServiceTest {
 
         assertThat(updatedComment.getContent()).isEqualTo(updateRequestDto.content());
     }
+
+    @DisplayName("댓글의 정보를 받아와 삭제를 진행한다")
+    @Test
+    void deleteComment() {
+        Member member = createMember();
+        memberRepository.save(member);
+
+        Board board = createBoard(member);
+        boardRepository.save(board);
+
+        Comment saveComment = buildComment(board, member);
+        commentRepository.save(saveComment);
+
+        CommentDeleteRequestDto commentDeleteRequestDto = CommentDeleteRequestDto.builder()
+                .memberId(member.getId())
+                .build();
+
+        commentService.deleteComment(saveComment.getId(), board.getId(), commentDeleteRequestDto);
+
+        assertThat(commentRepository.findById(saveComment.getId())).isEmpty();
+    }
+
 
     static Member createMember() {
         return Member.builder()
