@@ -4,6 +4,7 @@ import com.example.community.domain.board.entity.Board;
 import com.example.community.domain.board.repository.BoardRepository;
 import com.example.community.domain.comment.dto.CommentInfoResponseDto;
 import com.example.community.domain.comment.dto.CommentSaveRequestDto;
+import com.example.community.domain.comment.dto.CommentUpdateRequestDto;
 import com.example.community.domain.comment.entity.Comment;
 import com.example.community.domain.comment.repository.CommentRepository;
 import com.example.community.domain.member.entity.Member;
@@ -80,7 +81,29 @@ class CommentServiceTest {
         assertThat(commentInfoResponseDto.memberId()).isEqualTo(member.getId());
     }
 
-    @DisplayName("")
+    @DisplayName("수정할 정보를 입력하면 댓글 수정이 된다")
+    @Test
+    void updateComment() {
+        Member member = createMember();
+        memberRepository.save(member);
+
+        Board board = createBoard(member);
+        boardRepository.save(board);
+
+        Comment saveComment = buildComment(board, member);
+        commentRepository.save(saveComment);
+
+        CommentUpdateRequestDto updateRequestDto = CommentUpdateRequestDto.builder()
+                .content("Test123_Comment_Content")
+                .memberId(member.getId())
+                .build();
+
+        commentService.updateComment(saveComment.getId(), board.getId(), updateRequestDto);
+
+        Comment updatedComment = commentRepository.findAll().getFirst();
+
+        assertThat(updatedComment.getContent()).isEqualTo(updateRequestDto.content());
+    }
 
     static Member createMember() {
         return Member.builder()
