@@ -35,4 +35,10 @@ public class Comment {
         this.member = member;
         this.board = board;
     }
+
+    public void updateComment(String content) {
+        if(content != null) {
+            this.content = content;
+        }
+    }
 }

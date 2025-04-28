@@ -1,6 +1,6 @@
 package com.example.community.domain.board.service;
 
-import com.example.community.domain.board.dto.BoardInfoRequestDto;
+import com.example.community.domain.board.dto.BoardInfoResponseDto;
 import com.example.community.domain.board.dto.BoardRequestDto;
 import com.example.community.domain.board.dto.BoardUpdateRequestDto;
 import com.example.community.domain.board.entity.Board;
@@ -75,11 +75,11 @@ class BoardServiceTest {
 
         Board board = boardRepository.findAll().getFirst();
 
-        BoardInfoRequestDto boardInfoRequestDto = boardService.getBoard(board.getId());
+        BoardInfoResponseDto boardInfoResponseDto = boardService.getBoard(board.getId());
 
-        assertThat(boardInfoRequestDto.title()).isEqualTo(boardRequestDto.title());
-        assertThat(boardInfoRequestDto.content()).isEqualTo(boardRequestDto.content());
-        assertThat(boardInfoRequestDto.memberId()).isEqualTo(boardRequestDto.memberId());
+        assertThat(boardInfoResponseDto.title()).isEqualTo(boardRequestDto.title());
+        assertThat(boardInfoResponseDto.content()).isEqualTo(boardRequestDto.content());
+        assertThat(boardInfoResponseDto.memberId()).isEqualTo(boardRequestDto.memberId());
 
     }
 

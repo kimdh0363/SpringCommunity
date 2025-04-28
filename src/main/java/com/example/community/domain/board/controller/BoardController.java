@@ -23,8 +23,7 @@ public class BoardController {
 
     @PostMapping("/{boardId}")
     public ResponseEntity<?> getBoard(@PathVariable("boardId") Long boardId) {
-        boardService.getBoard(boardId);
-        return ResponseEntity.ok("단일 게시글 조회 성공");
+        return ResponseEntity.ok(boardService.getBoard(boardId));
     }
 
     @PatchMapping("/{boardId}")

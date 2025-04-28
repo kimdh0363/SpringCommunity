@@ -1,7 +1,6 @@
 package com.example.community.domain.board.service;
 
-import com.example.community.domain.board.dto.BoardDeleteRequestDto;
-import com.example.community.domain.board.dto.BoardInfoRequestDto;
+import com.example.community.domain.board.dto.BoardInfoResponseDto;
 import com.example.community.domain.board.dto.BoardRequestDto;
 import com.example.community.domain.board.dto.BoardUpdateRequestDto;
 import com.example.community.domain.board.entity.Board;
@@ -37,11 +36,11 @@ public class BoardService {
     }
 
     @Transactional(readOnly = true)
-    public BoardInfoRequestDto getBoard(Long boardId) {
+    public BoardInfoResponseDto getBoard(Long boardId) {
 
         Board board = findBoardById(boardId);
 
-        return BoardInfoRequestDto.builder()
+        return BoardInfoResponseDto.builder()
                 .title(board.getTitle())
                 .content(board.getContent())
                 .memberId(board.getMember().getId())

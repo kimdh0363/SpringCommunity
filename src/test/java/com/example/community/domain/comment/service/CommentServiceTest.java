@@ -1,9 +1,8 @@
 package com.example.community.domain.comment.service;
 
-import com.example.community.domain.board.dto.BoardRequestDto;
 import com.example.community.domain.board.entity.Board;
 import com.example.community.domain.board.repository.BoardRepository;
-import com.example.community.domain.board.service.BoardService;
+import com.example.community.domain.comment.dto.CommentInfoResponseDto;
 import com.example.community.domain.comment.dto.CommentSaveRequestDto;
 import com.example.community.domain.comment.entity.Comment;
 import com.example.community.domain.comment.repository.CommentRepository;
@@ -16,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class CommentServiceTest {
@@ -63,18 +61,45 @@ class CommentServiceTest {
         assertThat(comment.getMember().getId()).isEqualTo(member.getId());
     }
 
+    @DisplayName("댓글 id를 사용해 단일 댓글 조회를 실시한다.")
+    @Test
+    void getComment() {
+        Member member = createMember();
+        memberRepository.save(member);
+
+        Board board = createBoard(member);
+        boardRepository.save(board);
+
+        Comment comment = buildComment(board, member);
+        commentRepository.save(comment);
+
+        CommentInfoResponseDto commentInfoResponseDto = commentService.getComment(comment.getId());
+
+        assertThat(commentInfoResponseDto.content()).isEqualTo(comment.getContent());
+        assertThat(commentInfoResponseDto.boardId()).isEqualTo(board.getId());
+        assertThat(commentInfoResponseDto.memberId()).isEqualTo(member.getId());
+    }
+
     static Member createMember() {
         return Member.builder()
-                .username("Test")
-                .password("Test")
+                .username("Test_Member_UserName")
+                .password("Test_Member_Password")
                 .email("Test@Test.com")
                 .build();
     }
 
     static Board createBoard(Member member) {
         return Board.builder()
-                .title("Test")
-                .content("Test")
+                .title("Test_Board_Title")
+                .content("Test_Board_Content")
+                .member(member)
+                .build();
+    }
+
+    static Comment buildComment(Board board, Member member) {
+        return Comment.builder()
+                .content("Test_Comment_Content")
+                .board(board)
                 .member(member)
                 .build();
     }
